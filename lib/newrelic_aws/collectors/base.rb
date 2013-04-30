@@ -10,6 +10,7 @@ module NewRelicAWS
           :secret_access_key => @aws_secret_key,
           :region            => @aws_region
         )
+        @last_data_points = {}
       end
 
       def get_data_point(options)
@@ -27,7 +28,9 @@ module NewRelicAWS
           :dimensions  => [options[:dimension]]
         )
         point = statistics[:datapoints].last
-        return if point.nil?
+        data_point_id = [options[:dimension][:value], options[:metric_name]].join("/")
+        return if point.nil? || point[:timestamp] == @last_data_points[data_point_key]
+        @last_data_points[data_point_id] = point[:timestamp]
         [options[:dimension][:value], options[:metric_name], point[:unit].downcase, point[:sum]]
       end
 
