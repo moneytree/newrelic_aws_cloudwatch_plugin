@@ -99,6 +99,12 @@ module NewRelicAWS
 end
 
 def putMetric(namespace, metric_name, unit, value, dimensions_name, dimensions_value)
+   
+   AWS.config(
+            :access_key_id => @aws_access_key,
+            :secret_access_key => @aws_secret_key
+            )
+
           @cw ||= AWS::CloudWatch.new
               @cw.put_metric_data(
                   :namespace => namespace,
