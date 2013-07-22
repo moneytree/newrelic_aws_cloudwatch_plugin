@@ -23,8 +23,8 @@ module NewRelicAWS
             executions = domain.workflow_executions.started_after(workflow_start_time)
             totalCount = executions.count.to_i
 
-            completedExecutions = domain.workflow_executions.closed_after(workflow_start_time).with_status("COMPLETED")
-            completedExecutions.each do |execution|
+            completedExecutionsLong = domain.workflow_executions.closed_after(workflow_start_time).with_status("COMPLETED")
+            completedExecutionsLong.each do |execution|
               completedCount += 1
               starttime = execution.started_at
               endtime = execution.closed_at
@@ -38,7 +38,7 @@ module NewRelicAWS
 
             failedCount = executions.count({:status => "FAILED"}).to_i
             timed_outCount = executions.count({:status => "TIMED_OUT"}).to_i
-            openCount = totalCount - (completedCount + failedCount + timed_outCount)
+            openCount = totalCount - (executions.count({:status => "COMPLETED"}).to_i + failedCount + timed_outCount)
 
             putMetric("SWF/#{domain.name}", "Pending_Activity_Tasks_SSU", "Count", domain.activity_tasks.count("PRODUCTION_SSU_SCRAPE_TASKS").to_i, "environment", "production")
             putMetric("SWF/#{domain.name}", "Pending_Activity_Tasks_PRIORITY", "Count", domain.activity_tasks.count("PRODUCTION_PRIORITY_SCRAPE_TASKS").to_i, "environment", "production")
