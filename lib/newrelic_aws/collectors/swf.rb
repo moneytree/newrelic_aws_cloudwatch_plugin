@@ -23,8 +23,8 @@ module NewRelicAWS
             executions = domain.workflow_executions.started_after(workflow_start_time)
             totalCount = executions.count.to_i
 
-            completedExecutionsLong = domain.workflow_executions.closed_after(workflow_start_time).with_status("COMPLETED")
-            completedExecutionsLong.each do |execution|
+            completedExecutions = domain.workflow_executions.closed_after(workflow_start_time).with_status("COMPLETED")
+            completedExecutions.each do |execution|
               completedCount += 1
               starttime = execution.started_at
               endtime = execution.closed_at
